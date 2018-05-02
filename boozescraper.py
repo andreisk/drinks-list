@@ -41,7 +41,8 @@ for i in range(len(typeurls)):
                 drinktype.append(types[i])
                 desc = drink.find('div', {'class': 'result-desc'})
                 drinknames.append(desc.a.getText())
-                drinkdescs.append(desc.p.span.getText())
+                spans = desc.p.findAll('span')
+                drinkdescs.append(' '.join([span.getText() for span in spans])) #all spans, get text, merge text
                 drinkprices.append(drink.find('div', {'class': 'result-info'}).find('strong').getText())
         p += 50
         print('Scraping ' + types[i] + ', on drink number ' + str(p))
