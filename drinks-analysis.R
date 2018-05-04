@@ -31,9 +31,10 @@ dat$sent = sapply(dat$Desc,score_sentiment)
 dat$Desc[which.min(dat$sent)] #clearly sentiment analysis is imperfect: this is a good review
 
 ggplot(dat, aes(x=Type, y=Price)) + geom_boxplot() #price by type
-ggplot(dat, aes(x=sent, y=Price)) + geom_point() + geom_smooth(method='lm', se=F) #price by sentiment
-ggplot(dat, aes(x=sent, y=Price, col=Type)) + geom_point() + geom_smooth(method = 'lm', se=F) #price by type and sentiment
-#regression looks inappropriate
+ggplot(dat, aes(x=sent, y=Price)) + geom_point() + geom_smooth(method = 'loess', se=F) #price by sentiment
+ggplot(dat, aes(x=sent, y=Price, col=Type)) + geom_point() + geom_smooth(method = 'lm', se =F) #price by type and sentiment
+w#regression looks inappropriate
+
 anova(lm(data = dat, Price ~ Type)) #ANOVA by type
 TukeyHSD(aov(data = dat, Price ~ Type)) #Cognac and Armagnac
 
@@ -57,9 +58,11 @@ summary(dat)
 sapply(colnames(sents), function(x){dat$Desc[which.max(dat[[x]])]}) #most intense description by sentiment
 
 plotdat = dat %>% 
-  select(Name, Price, Type, anger, anticipation, disgust, fear, joy, negative, positive, sadness, surprise, trust)
+  select(Name, Price, Type, colnames(sents))
 plotdat = melt(plotdat, id.vars = c('Name', 'Price', 'Type'))
-ggplot(plotdat, aes(x=value, y=Price, col=variable)) + geom_jitter() + geom_smooth(method = 'lm', se=F) #again no apparent relationship between sentiment and price
+ggplot(plotdat, aes(x=value, y=Price, col=variable)) + geom_jitter() + geom_smooth(method = 'loess', se=F) #again no apparent relationship between sentiment and price
+
+ggplot(plotdat, aes(y=value, x=variable)) + geom_boxplot() + facet_wrap(~Type) #no obvious sigificant differences between type and sentiment
 
 #missing prices
 #multiple imputation?  Probably not appropriate given limited data.  Best to update scraper.
