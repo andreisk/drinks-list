@@ -29,6 +29,7 @@ score_sentiment = function(str){
 
 dat$sent = sapply(dat$Desc,score_sentiment)
 dat$Desc[which.min(dat$sent)] #clearly sentiment analysis is imperfect: this is a good review
+dat$Desc[which.max(dat$sent)]
 
 ggplot(dat, aes(x=Type, y=Price)) + geom_boxplot() #price by type
 ggplot(dat, aes(x=sent, y=Price)) + geom_point() + geom_smooth(method = 'loess', se=F) #price by sentiment
